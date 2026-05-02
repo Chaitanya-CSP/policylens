@@ -1,0 +1,846 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>PolicyLens 🔍 — Find Government Schemes You Deserve</title>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,400&display=swap" rel="stylesheet"/>
+<style>
+  :root {
+    --navy: #0B1E3D;
+    --blue: #1A56C4;
+    --sky: #3B82F6;
+    --teal: #0EA5C9;
+    --gold: #F59E0B;
+    --green: #10B981;
+    --red: #EF4444;
+    --light: #F0F6FF;
+    --white: #FFFFFF;
+    --gray: #64748B;
+    --border: rgba(26,86,196,0.15);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body { font-family: 'DM Sans', sans-serif; background: #F8FAFF; color: var(--navy); overflow-x: hidden; }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 999;
+    background: rgba(11,30,61,0.95); backdrop-filter: blur(12px);
+    padding: 0 2rem; display: flex; align-items: center; justify-content: space-between; height: 64px;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+  }
+  .nav-logo { font-family: 'Sora', sans-serif; font-size: 1.4rem; font-weight: 700; color: white; display: flex; align-items: center; gap: 8px; text-decoration: none; }
+  .nav-logo span { color: var(--gold); }
+  .nav-links { display: flex; gap: 2rem; }
+  .nav-links a { color: rgba(255,255,255,0.75); text-decoration: none; font-size: 0.9rem; font-weight: 500; transition: color 0.2s; }
+  .nav-links a:hover { color: white; }
+  .nav-cta { background: var(--gold); color: var(--navy); padding: 8px 20px; border-radius: 50px; font-size: 0.85rem; font-weight: 600; text-decoration: none; transition: transform 0.2s; }
+  .nav-cta:hover { transform: scale(1.05); }
+
+  /* ── HERO ── */
+  .hero {
+    min-height: 100vh; display: flex; align-items: center; justify-content: center;
+    position: relative; overflow: hidden; padding: 80px 2rem 4rem;
+    background: linear-gradient(135deg, #0B1E3D 0%, #0D2A5E 40%, #133580 70%, #1A4080 100%);
+  }
+  .hero-bg-pattern {
+    position: absolute; inset: 0; opacity: 0.04;
+    background-image: radial-gradient(circle at 2px 2px, white 1px, transparent 0);
+    background-size: 40px 40px;
+  }
+  .hero-glow {
+    position: absolute; width: 600px; height: 600px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(59,130,246,0.25) 0%, transparent 70%);
+    top: -100px; right: -100px; pointer-events: none;
+  }
+  .hero-glow2 {
+    position: absolute; width: 400px; height: 400px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(245,158,11,0.15) 0%, transparent 70%);
+    bottom: 0; left: -50px; pointer-events: none;
+  }
+  .hero-content { position: relative; z-index: 2; text-align: center; max-width: 800px; }
+  .hero-badge {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: rgba(245,158,11,0.15); border: 1px solid rgba(245,158,11,0.4);
+    color: var(--gold); padding: 6px 18px; border-radius: 50px; font-size: 0.8rem; font-weight: 600;
+    letter-spacing: 0.5px; margin-bottom: 1.5rem; animation: fadeUp 0.6s ease;
+  }
+  .hero h1 {
+    font-family: 'Sora', sans-serif; font-size: clamp(2.2rem, 5vw, 3.8rem); font-weight: 700;
+    color: white; line-height: 1.15; margin-bottom: 1.25rem;
+    animation: fadeUp 0.7s ease 0.1s both;
+  }
+  .hero h1 span { color: var(--gold); }
+  .hero p {
+    font-size: 1.1rem; color: rgba(255,255,255,0.7); max-width: 580px;
+    margin: 0 auto 2.5rem; line-height: 1.7; animation: fadeUp 0.7s ease 0.2s both;
+  }
+  .hero-btns { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; animation: fadeUp 0.7s ease 0.3s both; }
+  .btn-primary {
+    background: var(--gold); color: var(--navy); padding: 14px 32px;
+    border-radius: 50px; font-weight: 700; font-size: 1rem; text-decoration: none;
+    display: inline-flex; align-items: center; gap: 8px; transition: all 0.25s;
+    box-shadow: 0 4px 20px rgba(245,158,11,0.4);
+  }
+  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(245,158,11,0.5); }
+  .btn-outline {
+    background: transparent; color: white; padding: 14px 32px;
+    border-radius: 50px; font-weight: 600; font-size: 1rem; text-decoration: none;
+    border: 1.5px solid rgba(255,255,255,0.35); transition: all 0.25s;
+  }
+  .btn-outline:hover { border-color: white; background: rgba(255,255,255,0.08); }
+  .hero-stats {
+    display: flex; gap: 3rem; justify-content: center; margin-top: 3.5rem;
+    animation: fadeUp 0.7s ease 0.4s both;
+  }
+  .stat { text-align: center; }
+  .stat-num { font-family: 'Sora', sans-serif; font-size: 1.8rem; font-weight: 700; color: white; }
+  .stat-label { font-size: 0.8rem; color: rgba(255,255,255,0.5); margin-top: 2px; }
+
+  /* ── FLOATING CARDS ── */
+  .floating-cards {
+    position: absolute; right: 5%; top: 50%; transform: translateY(-50%);
+    display: flex; flex-direction: column; gap: 12px; z-index: 3;
+  }
+  .fcard {
+    background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15);
+    backdrop-filter: blur(10px); border-radius: 14px; padding: 14px 18px;
+    min-width: 220px; animation: float 4s ease-in-out infinite;
+    display: flex; align-items: center; gap: 12px;
+  }
+  .fcard:nth-child(2) { animation-delay: -2s; }
+  .fcard-icon { font-size: 1.6rem; }
+  .fcard-text { font-size: 0.8rem; color: rgba(255,255,255,0.85); font-weight: 500; line-height: 1.4; }
+  .fcard-tag { font-size: 0.7rem; color: var(--gold); font-weight: 600; }
+
+  /* ── SECTIONS ── */
+  section { padding: 5rem 2rem; }
+  .container { max-width: 1100px; margin: 0 auto; }
+  .section-label { font-size: 0.8rem; font-weight: 700; letter-spacing: 2px; color: var(--sky); text-transform: uppercase; margin-bottom: 0.75rem; }
+  .section-title { font-family: 'Sora', sans-serif; font-size: clamp(1.8rem, 3vw, 2.5rem); font-weight: 700; color: var(--navy); line-height: 1.2; margin-bottom: 1rem; }
+  .section-sub { font-size: 1rem; color: var(--gray); max-width: 580px; line-height: 1.7; }
+
+  /* ── HOW IT WORKS ── */
+  .how-it-works { background: white; }
+  .steps { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 2rem; margin-top: 3rem; }
+  .step { text-align: center; padding: 2rem 1.5rem; border-radius: 20px; background: var(--light); border: 1px solid var(--border); transition: transform 0.2s, box-shadow 0.2s; position: relative; }
+  .step:hover { transform: translateY(-4px); box-shadow: 0 12px 40px rgba(26,86,196,0.1); }
+  .step-num { width: 48px; height: 48px; background: var(--blue); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-family: 'Sora', sans-serif; font-size: 1.2rem; font-weight: 700; margin: 0 auto 1rem; }
+  .step-icon { font-size: 2.2rem; margin-bottom: 0.75rem; }
+  .step h3 { font-family: 'Sora', sans-serif; font-size: 1rem; font-weight: 600; margin-bottom: 0.5rem; color: var(--navy); }
+  .step p { font-size: 0.88rem; color: var(--gray); line-height: 1.6; }
+
+  /* ── ELIGIBILITY CHECKER ── */
+  .checker-section { background: linear-gradient(135deg, #F0F6FF 0%, #E8F0FF 100%); }
+  .checker-wrapper { display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; align-items: start; }
+  .checker-form-card {
+    background: white; border-radius: 24px; padding: 2.5rem;
+    box-shadow: 0 8px 40px rgba(26,86,196,0.1); border: 1px solid var(--border);
+  }
+  .checker-form-card h3 { font-family: 'Sora', sans-serif; font-size: 1.4rem; font-weight: 700; margin-bottom: 0.4rem; color: var(--navy); }
+  .checker-form-card p { font-size: 0.88rem; color: var(--gray); margin-bottom: 1.75rem; }
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+  .form-group { margin-bottom: 1rem; }
+  .form-group label { display: block; font-size: 0.82rem; font-weight: 600; color: var(--navy); margin-bottom: 5px; }
+  .form-group input, .form-group select {
+    width: 100%; padding: 11px 14px; border: 1.5px solid #D1D9F0;
+    border-radius: 10px; font-size: 0.92rem; font-family: 'DM Sans', sans-serif;
+    color: var(--navy); background: #FAFBFF; transition: border 0.2s;
+    appearance: none;
+  }
+  .form-group input:focus, .form-group select:focus { outline: none; border-color: var(--blue); background: white; }
+  .check-btn {
+    width: 100%; padding: 14px; background: var(--blue); color: white;
+    border: none; border-radius: 12px; font-size: 1rem; font-weight: 600;
+    cursor: pointer; font-family: 'DM Sans', sans-serif; transition: all 0.25s;
+    display: flex; align-items: center; justify-content: center; gap: 8px; margin-top: 0.5rem;
+  }
+  .check-btn:hover { background: #1347A0; transform: translateY(-1px); box-shadow: 0 6px 20px rgba(26,86,196,0.3); }
+
+  /* Results Panel */
+  .results-panel { display: none; }
+  .results-panel.visible { display: block; }
+  .result-header { font-family: 'Sora', sans-serif; font-size: 1.1rem; font-weight: 700; margin-bottom: 1rem; color: var(--navy); }
+  .policy-result-card {
+    background: white; border-radius: 16px; padding: 1.25rem 1.5rem;
+    border: 1.5px solid #E2EAF8; margin-bottom: 1rem;
+    box-shadow: 0 2px 12px rgba(26,86,196,0.06); transition: all 0.2s; position: relative; overflow: hidden;
+  }
+  .policy-result-card:hover { border-color: var(--blue); box-shadow: 0 4px 20px rgba(26,86,196,0.12); }
+  .policy-result-card.eligible { border-color: var(--green); }
+  .policy-result-card.not-eligible { border-color: #FCA5A5; opacity: 0.7; }
+  .policy-result-card .badge-elig {
+    position: absolute; top: 12px; right: 14px;
+    font-size: 0.72rem; font-weight: 700; padding: 3px 10px; border-radius: 50px;
+  }
+  .badge-yes { background: #D1FAE5; color: #065F46; }
+  .badge-no { background: #FEE2E2; color: #991B1B; }
+  .badge-check { background: #FEF3C7; color: #92400E; }
+  .pcard-top { display: flex; align-items: flex-start; gap: 12px; margin-bottom: 0.6rem; }
+  .pcard-emoji { font-size: 1.8rem; }
+  .pcard-info h4 { font-size: 0.95rem; font-weight: 700; color: var(--navy); margin-bottom: 2px; }
+  .pcard-info span { font-size: 0.78rem; color: var(--gray); }
+  .pcard-reason { font-size: 0.8rem; color: var(--gray); line-height: 1.5; margin-bottom: 0.75rem; padding: 8px 12px; background: #F8FAFF; border-radius: 8px; border-left: 3px solid var(--sky); }
+  .apply-link-btn {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: var(--blue); color: white; padding: 8px 18px; border-radius: 8px;
+    font-size: 0.82rem; font-weight: 600; text-decoration: none; transition: all 0.2s;
+  }
+  .apply-link-btn:hover { background: #1347A0; transform: translateX(2px); }
+  .apply-link-btn.disabled { background: #CBD5E1; cursor: not-allowed; pointer-events: none; }
+
+  /* ── POLICY CATEGORIES ── */
+  .policies-section { background: white; }
+  .cat-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.5rem; margin-top: 2.5rem; }
+  .cat-card {
+    border-radius: 20px; overflow: hidden; border: 1px solid var(--border);
+    transition: all 0.25s; cursor: pointer; position: relative;
+  }
+  .cat-card:hover { transform: translateY(-5px); box-shadow: 0 16px 50px rgba(26,86,196,0.15); }
+  .cat-img {
+    height: 160px; display: flex; align-items: center; justify-content: center;
+    font-size: 4rem; position: relative; overflow: hidden;
+  }
+  .cat-img-overlay {
+    position: absolute; inset: 0; opacity: 0.85;
+  }
+  .cat-img-emoji { position: relative; z-index: 2; filter: drop-shadow(0 4px 8px rgba(0,0,0,0.3)); }
+  .cat-body { padding: 1.25rem 1.5rem; background: white; }
+  .cat-body h3 { font-family: 'Sora', sans-serif; font-size: 1rem; font-weight: 700; color: var(--navy); margin-bottom: 0.3rem; }
+  .cat-body p { font-size: 0.82rem; color: var(--gray); margin-bottom: 0.75rem; line-height: 1.5; }
+  .cat-count { font-size: 0.75rem; font-weight: 700; color: var(--sky); }
+
+  /* Agriculture */
+  .ag .cat-img-overlay { background: linear-gradient(135deg, #14532d, #15803d); }
+  /* Health */
+  .he .cat-img-overlay { background: linear-gradient(135deg, #7f1d1d, #dc2626); }
+  /* Education */
+  .ed .cat-img-overlay { background: linear-gradient(135deg, #1e3a8a, #2563eb); }
+  /* Women */
+  .wo .cat-img-overlay { background: linear-gradient(135deg, #701a75, #a855f7); }
+  /* Housing */
+  .ho .cat-img-overlay { background: linear-gradient(135deg, #92400e, #d97706); }
+  /* Finance */
+  .fi .cat-img-overlay { background: linear-gradient(135deg, #0c4a6e, #0ea5e9); }
+
+  /* ── FEATURED POLICIES ── */
+  .featured-section { background: #F8FAFF; }
+  .policy-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 1.5rem; margin-top: 2.5rem; }
+  .policy-card {
+    background: white; border-radius: 20px; overflow: hidden;
+    border: 1px solid var(--border); transition: all 0.25s; position: relative;
+  }
+  .policy-card:hover { transform: translateY(-4px); box-shadow: 0 12px 40px rgba(26,86,196,0.12); }
+  .policy-card-banner { height: 130px; display: flex; align-items: center; justify-content: center; font-size: 3.5rem; position: relative; overflow: hidden; }
+  .policy-card-banner-bg { position: absolute; inset: 0; }
+  .policy-card-banner-emoji { position: relative; z-index: 2; }
+  .policy-card-body { padding: 1.25rem 1.5rem; }
+  .policy-card-body h3 { font-family: 'Sora', sans-serif; font-size: 0.95rem; font-weight: 700; margin-bottom: 0.3rem; color: var(--navy); }
+  .policy-card-body .ministry { font-size: 0.75rem; color: var(--gray); margin-bottom: 0.6rem; display: flex; align-items: center; gap: 4px; }
+  .policy-card-body .desc { font-size: 0.83rem; color: var(--gray); line-height: 1.6; margin-bottom: 1rem; }
+  .policy-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 1rem; }
+  .ptag { font-size: 0.7rem; font-weight: 600; padding: 3px 10px; border-radius: 50px; }
+  .ptag-blue { background: #EFF6FF; color: #1D4ED8; }
+  .ptag-green { background: #ECFDF5; color: #059669; }
+  .ptag-orange { background: #FFF7ED; color: #C2410C; }
+  .ptag-purple { background: #FAF5FF; color: #7E22CE; }
+  .policy-card-footer { display: flex; align-items: center; justify-content: space-between; padding-top: 1rem; border-top: 1px solid #F1F5F9; }
+  .check-eligibility-btn {
+    font-size: 0.82rem; font-weight: 600; color: var(--blue); background: none; border: none;
+    cursor: pointer; display: flex; align-items: center; gap: 4px; font-family: 'DM Sans', sans-serif;
+  }
+  .check-eligibility-btn:hover { color: #1347A0; }
+  .benefit-pill { font-size: 0.75rem; background: #F0FDF4; color: #15803D; padding: 4px 10px; border-radius: 50px; font-weight: 600; }
+
+  /* ── TRUST BAR ── */
+  .trust-bar { background: var(--navy); padding: 3rem 2rem; }
+  .trust-items { display: flex; align-items: center; justify-content: center; gap: 4rem; flex-wrap: wrap; }
+  .trust-item { text-align: center; color: white; }
+  .trust-num { font-family: 'Sora', sans-serif; font-size: 2rem; font-weight: 700; color: var(--gold); }
+  .trust-label { font-size: 0.82rem; color: rgba(255,255,255,0.6); margin-top: 4px; }
+
+  /* ── FOOTER ── */
+  footer { background: #06122A; padding: 3rem 2rem; }
+  .footer-content { max-width: 1100px; margin: 0 auto; display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 2rem; }
+  .footer-brand h3 { font-family: 'Sora', sans-serif; font-size: 1.3rem; color: white; font-weight: 700; margin-bottom: 0.5rem; }
+  .footer-brand h3 span { color: var(--gold); }
+  .footer-brand p { font-size: 0.83rem; color: rgba(255,255,255,0.5); line-height: 1.7; max-width: 280px; }
+  .footer-col h4 { font-size: 0.85rem; font-weight: 700; color: white; margin-bottom: 1rem; }
+  .footer-col a { display: block; font-size: 0.82rem; color: rgba(255,255,255,0.5); text-decoration: none; margin-bottom: 0.5rem; transition: color 0.2s; }
+  .footer-col a:hover { color: white; }
+  .footer-bottom { max-width: 1100px; margin: 2rem auto 0; padding-top: 1.5rem; border-top: 1px solid rgba(255,255,255,0.08); display: flex; justify-content: space-between; align-items: center; flex-wrap: gap; }
+  .footer-bottom p { font-size: 0.78rem; color: rgba(255,255,255,0.4); }
+  .disclaimer { font-size: 0.72rem; color: rgba(255,255,255,0.3); max-width: 600px; line-height: 1.6; }
+
+  /* ── MODAL ── */
+  .modal-overlay {
+    position: fixed; inset: 0; background: rgba(11,30,61,0.6); backdrop-filter: blur(4px);
+    z-index: 9999; display: none; align-items: center; justify-content: center; padding: 1rem;
+  }
+  .modal-overlay.open { display: flex; }
+  .modal {
+    background: white; border-radius: 24px; max-width: 560px; width: 100%;
+    padding: 2.5rem; position: relative; animation: popIn 0.3s ease;
+  }
+  .modal-close {
+    position: absolute; top: 16px; right: 18px; background: #F1F5F9; border: none;
+    width: 32px; height: 32px; border-radius: 50%; cursor: pointer; font-size: 1.1rem;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .modal h3 { font-family: 'Sora', sans-serif; font-size: 1.3rem; font-weight: 700; margin-bottom: 0.4rem; color: var(--navy); }
+  .modal .ministry-tag { font-size: 0.78rem; color: var(--gray); margin-bottom: 1rem; display: flex; align-items: center; gap: 6px; }
+  .modal-banner { border-radius: 14px; height: 100px; display: flex; align-items: center; justify-content: center; font-size: 3rem; margin-bottom: 1.25rem; }
+  .modal p { font-size: 0.88rem; color: var(--gray); line-height: 1.7; margin-bottom: 1rem; }
+  .modal-criteria { background: #F8FAFF; border-radius: 12px; padding: 1rem 1.25rem; margin-bottom: 1.25rem; }
+  .modal-criteria h4 { font-size: 0.82rem; font-weight: 700; color: var(--navy); margin-bottom: 0.6rem; }
+  .modal-criteria li { font-size: 0.82rem; color: var(--gray); margin-bottom: 4px; padding-left: 1rem; position: relative; list-style: none; }
+  .modal-criteria li::before { content: '✓'; position: absolute; left: 0; color: var(--green); font-weight: 700; }
+  .modal-apply-btn {
+    width: 100%; padding: 14px; background: var(--blue); color: white; border: none;
+    border-radius: 12px; font-size: 1rem; font-weight: 600; cursor: pointer;
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+    text-decoration: none; font-family: 'DM Sans', sans-serif; transition: all 0.2s;
+  }
+  .modal-apply-btn:hover { background: #1347A0; }
+
+  /* Animations */
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+  @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+  @keyframes popIn { from { opacity: 0; transform: scale(0.94); } to { opacity: 1; transform: scale(1); } }
+
+  /* Responsive */
+  @media (max-width: 900px) {
+    .floating-cards { display: none; }
+    .checker-wrapper { grid-template-columns: 1fr; }
+    .footer-content { grid-template-columns: 1fr 1fr; }
+  }
+  @media (max-width: 600px) {
+    .nav-links { display: none; }
+    .form-row { grid-template-columns: 1fr; }
+    .hero-stats { gap: 1.5rem; }
+    .footer-content { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a class="nav-logo" href="#">🔍 Policy<span>Lens</span></a>
+  <div class="nav-links">
+    <a href="#how">How It Works</a>
+    <a href="#checker">Check Eligibility</a>
+    <a href="#policies">Policies</a>
+    <a href="#categories">Categories</a>
+  </div>
+  <a href="#checker" class="nav-cta">✨ Check My Eligibility</a>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg-pattern"></div>
+  <div class="hero-glow"></div>
+  <div class="hero-glow2"></div>
+  <div class="hero-content">
+    <div class="hero-badge">🇮🇳 India's #1 Policy Eligibility Platform</div>
+    <h1>Find Government Schemes<br>You Actually <span>Deserve</span> 🎯</h1>
+    <p>Stop missing out on benefits you're entitled to. PolicyLens instantly checks your eligibility for 500+ government schemes — no paperwork, no confusion, just clarity.</p>
+    <div class="hero-btns">
+      <a href="#checker" class="btn-primary">🚀 Check My Eligibility — Free</a>
+      <a href="#policies" class="btn-outline">Browse All Policies →</a>
+    </div>
+    <div class="hero-stats">
+      <div class="stat"><div class="stat-num">500+</div><div class="stat-label">Govt Schemes</div></div>
+      <div class="stat"><div class="stat-num">2.4M+</div><div class="stat-label">Beneficiaries Found</div></div>
+      <div class="stat"><div class="stat-num">28</div><div class="stat-label">States Covered</div></div>
+      <div class="stat"><div class="stat-num">₹0</div><div class="stat-label">Always Free</div></div>
+    </div>
+  </div>
+  <div class="floating-cards">
+    <div class="fcard">
+      <div class="fcard-icon">🏥</div>
+      <div class="fcard-text"><div class="fcard-tag">✅ ELIGIBLE</div>Ayushman Bharat<br>₹5 Lakh Health Cover</div>
+    </div>
+    <div class="fcard">
+      <div class="fcard-icon">🌾</div>
+      <div class="fcard-text"><div class="fcard-tag">✅ ELIGIBLE</div>PM-KISAN Scheme<br>₹6,000/year benefit</div>
+    </div>
+    <div class="fcard">
+      <div class="fcard-icon">🎓</div>
+      <div class="fcard-text"><div class="fcard-tag">✅ ELIGIBLE</div>NSP Scholarship<br>Upto ₹12,000/year</div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="how-it-works" id="how">
+  <div class="container">
+    <div class="section-label">Simple Process</div>
+    <div class="section-title">How PolicyLens Works 🛠️</div>
+    <div class="section-sub">We match you with the right government schemes in under 60 seconds. No forms to fill, no offices to visit.</div>
+    <div class="steps">
+      <div class="step">
+        <div class="step-icon">📝</div>
+        <div class="step-num">1</div>
+        <h3>Fill Your Profile</h3>
+        <p>Enter basic details — age, gender, caste, occupation, and income. Takes less than a minute.</p>
+      </div>
+      <div class="step">
+        <div class="step-icon">⚡</div>
+        <div class="step-num">2</div>
+        <h3>Instant Matching</h3>
+        <p>Our system automatically checks 500+ schemes against your profile in real-time.</p>
+      </div>
+      <div class="step">
+        <div class="step-icon">✅</div>
+        <div class="step-num">3</div>
+        <h3>See Your Results</h3>
+        <p>Get a clear list of schemes you qualify for, with reasons why you're eligible.</p>
+      </div>
+      <div class="step">
+        <div class="step-icon">🚀</div>
+        <div class="step-num">4</div>
+        <h3>Apply Directly</h3>
+        <p>Click the official government Apply button for each scheme. We redirect you safely.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ELIGIBILITY CHECKER -->
+<section class="checker-section" id="checker">
+  <div class="container">
+    <div class="checker-wrapper">
+      <div>
+        <div class="section-label">Eligibility Engine</div>
+        <div class="section-title">Check Your Eligibility Now 🔍</div>
+        <div class="section-sub">Fill in your details below and we'll instantly show you every government scheme you qualify for — including how to apply.</div>
+        <br/><br/>
+        <div style="background:white;border-radius:16px;padding:1.5rem;border:1px solid var(--border);margin-top:1rem;">
+          <div style="font-size:0.85rem;color:var(--gray);line-height:1.7;">
+            🔒 <strong style="color:var(--navy);">Your data is private.</strong> We don't store or share your personal details. All checks happen in your browser.
+          </div>
+        </div>
+        <br/>
+        <div style="background:linear-gradient(135deg,#EFF6FF,#DBEAFE);border-radius:16px;padding:1.5rem;border:1px solid #BFDBFE;">
+          <div style="font-size:0.88rem;color:#1E40AF;font-weight:600;margin-bottom:0.5rem;">💡 Did You Know?</div>
+          <div style="font-size:0.83rem;color:#1D4ED8;line-height:1.7;">Over 60% of eligible Indians miss out on government benefits simply because they don't know they qualify. PolicyLens changes that — for free.</div>
+        </div>
+      </div>
+      <div>
+        <div class="checker-form-card">
+          <h3>👤 Tell Us About Yourself</h3>
+          <p>All fields help us find the most accurate matches for you</p>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Age 🎂</label>
+              <input type="number" id="f-age" placeholder="e.g. 28" min="1" max="100"/>
+            </div>
+            <div class="form-group">
+              <label>Gender 🧑</label>
+              <select id="f-gender">
+                <option value="">Select</option>
+                <option>Male</option>
+                <option>Female</option>
+                <option>Transgender</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Caste Category 📋</label>
+              <select id="f-caste">
+                <option value="">Select</option>
+                <option>General</option>
+                <option>OBC</option>
+                <option>SC</option>
+                <option>ST</option>
+                <option>EWS</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>State 🗺️</label>
+              <select id="f-state">
+                <option value="">Select</option>
+                <option>Andhra Pradesh</option>
+                <option>Telangana</option>
+                <option>Tamil Nadu</option>
+                <option>Karnataka</option>
+                <option>Maharashtra</option>
+                <option>Delhi</option>
+                <option>Uttar Pradesh</option>
+                <option>Bihar</option>
+                <option>West Bengal</option>
+                <option>Other</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Occupation 💼</label>
+            <select id="f-occ">
+              <option value="">Select</option>
+              <option>Student</option>
+              <option>Farmer</option>
+              <option>Self-Employed / Business</option>
+              <option>Salaried Employee</option>
+              <option>Daily Wage Worker</option>
+              <option>Unemployed</option>
+              <option>Senior Citizen (Retired)</option>
+            </select>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Annual Income 💰</label>
+              <select id="f-income">
+                <option value="">Select</option>
+                <option value="0">Below ₹1 Lakh</option>
+                <option value="1">₹1–2.5 Lakh</option>
+                <option value="2">₹2.5–5 Lakh</option>
+                <option value="3">₹5–8 Lakh</option>
+                <option value="4">Above ₹8 Lakh</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Disability? ♿</label>
+              <select id="f-dis">
+                <option value="no">No</option>
+                <option value="yes">Yes</option>
+              </select>
+            </div>
+          </div>
+          <button class="check-btn" onclick="checkEligibility()">🔍 Check My Eligibility Now</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Results -->
+    <div class="results-panel" id="results-panel" style="margin-top:3rem;">
+      <div class="result-header" id="results-header"></div>
+      <div id="results-cards"></div>
+    </div>
+  </div>
+</section>
+
+<!-- POLICY CATEGORIES -->
+<section class="policies-section" id="categories">
+  <div class="container">
+    <div class="section-label">Browse by Topic</div>
+    <div class="section-title">Explore Policy Categories 🗂️</div>
+    <div class="section-sub">From healthcare to housing — find every scheme that matters to your life.</div>
+    <div class="cat-grid">
+      <div class="cat-card ag">
+        <div class="cat-img"><div class="cat-img-overlay"></div><div class="cat-img-emoji">🌾</div></div>
+        <div class="cat-body"><h3>Agriculture & Farming</h3><p>Subsidies, crop insurance, income support for farmers</p><div class="cat-count">42 Schemes Available</div></div>
+      </div>
+      <div class="cat-card he">
+        <div class="cat-img"><div class="cat-img-overlay"></div><div class="cat-img-emoji">🏥</div></div>
+        <div class="cat-body"><h3>Health & Insurance</h3><p>Free treatment, health cover, medicine subsidies</p><div class="cat-count">38 Schemes Available</div></div>
+      </div>
+      <div class="cat-card ed">
+        <div class="cat-img"><div class="cat-img-overlay"></div><div class="cat-img-emoji">🎓</div></div>
+        <div class="cat-body"><h3>Education & Scholarships</h3><p>Scholarships, fee waivers, free books & uniforms</p><div class="cat-count">55 Schemes Available</div></div>
+      </div>
+      <div class="cat-card wo">
+        <div class="cat-img"><div class="cat-img-overlay"></div><div class="cat-img-emoji">👩</div></div>
+        <div class="cat-body"><h3>Women & Child Welfare</h3><p>Maternity benefits, Beti Bachao, self-help loans</p><div class="cat-count">61 Schemes Available</div></div>
+      </div>
+      <div class="cat-card ho">
+        <div class="cat-img"><div class="cat-img-overlay"></div><div class="cat-img-emoji">🏠</div></div>
+        <div class="cat-body"><h3>Housing & Infrastructure</h3><p>Subsidized homes, toilets, LPG connections</p><div class="cat-count">29 Schemes Available</div></div>
+      </div>
+      <div class="cat-card fi">
+        <div class="cat-img"><div class="cat-img-overlay"></div><div class="cat-img-emoji">💳</div></div>
+        <div class="cat-body"><h3>Finance & Employment</h3><p>Mudra loans, MNREGA, startup grants</p><div class="cat-count">47 Schemes Available</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURED POLICIES -->
+<section class="featured-section" id="policies">
+  <div class="container">
+    <div class="section-label">Top Schemes</div>
+    <div class="section-title">Most Applied Government Schemes 🏆</div>
+    <div class="section-sub">These are India's most impactful welfare programs. Click any card to see details and apply.</div>
+    <div class="policy-grid" id="policy-grid"></div>
+  </div>
+</section>
+
+<!-- TRUST BAR -->
+<div class="trust-bar">
+  <div class="trust-items">
+    <div class="trust-item"><div class="trust-num">500+</div><div class="trust-label">Active Schemes Listed</div></div>
+    <div class="trust-item"><div class="trust-num">2.4M+</div><div class="trust-label">Eligible Users Found</div></div>
+    <div class="trust-item"><div class="trust-num">28</div><div class="trust-label">States Covered</div></div>
+    <div class="trust-item"><div class="trust-num">100%</div><div class="trust-label">Free Forever</div></div>
+    <div class="trust-item"><div class="trust-num">🔒</div><div class="trust-label">Privacy First</div></div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-content">
+    <div class="footer-brand">
+      <h3>🔍 Policy<span>Lens</span></h3>
+      <p>India's most trusted platform for discovering and applying to government welfare schemes. Built for every citizen.</p>
+    </div>
+    <div class="footer-col">
+      <h4>Quick Links</h4>
+      <a href="#checker">Check Eligibility</a>
+      <a href="#policies">All Policies</a>
+      <a href="#categories">Categories</a>
+      <a href="#how">How It Works</a>
+    </div>
+    <div class="footer-col">
+      <h4>Scheme Types</h4>
+      <a href="#">Agriculture</a>
+      <a href="#">Healthcare</a>
+      <a href="#">Education</a>
+      <a href="#">Women & Child</a>
+      <a href="#">Housing</a>
+    </div>
+    <div class="footer-col">
+      <h4>Official Portals</h4>
+      <a href="https://www.india.gov.in" target="_blank">India.gov.in</a>
+      <a href="https://www.myscheme.gov.in" target="_blank">MyScheme Portal</a>
+      <a href="https://www.pmjay.gov.in" target="_blank">Ayushman Bharat</a>
+      <a href="https://scholarships.gov.in" target="_blank">NSP Scholarships</a>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>© 2026 PolicyLens. All rights reserved. Not affiliated with the Government of India.</p>
+    <p class="disclaimer">PolicyLens is an independent informational platform. Always verify eligibility on official government portals before applying.</p>
+  </div>
+</footer>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal()">✕</button>
+    <div class="modal-banner" id="modal-banner"></div>
+    <h3 id="modal-title"></h3>
+    <div class="ministry-tag" id="modal-ministry"></div>
+    <p id="modal-desc"></p>
+    <div class="modal-criteria">
+      <h4>Eligibility Criteria</h4>
+      <ul id="modal-criteria"></ul>
+    </div>
+    <a id="modal-apply" class="modal-apply-btn" href="#" target="_blank">🚀 Apply on Official Govt Portal →</a>
+  </div>
+</div>
+
+<script>
+// ── POLICY DATABASE ──
+const POLICIES = [
+  {
+    id:1, name:"Ayushman Bharat – PM-JAY", emoji:"🏥",
+    ministry:"🏛️ Ministry of Health & Family Welfare",
+    banner:"linear-gradient(135deg,#7f1d1d,#dc2626)",
+    desc:"Provides free health insurance of up to ₹5 lakh per family per year for secondary and tertiary hospitalization. Covers 10.74 crore poor and vulnerable families.",
+    tags:[{l:"Health",c:"ptag-blue"},{l:"₹5 Lakh Cover",c:"ptag-green"},{l:"Free",c:"ptag-orange"}],
+    benefit:"₹5 Lakh/Year",
+    criteria:["Annual income below ₹2.5 lakh","Not covered under CGHS/ESIC","BPL card or ration card holder preferred","All family members covered"],
+    applyUrl:"https://pmjay.gov.in",
+    check: p => p.income <= 1
+  },
+  {
+    id:2, name:"PM Kisan Samman Nidhi", emoji:"🌾",
+    ministry:"🏛️ Ministry of Agriculture",
+    banner:"linear-gradient(135deg,#14532d,#16a34a)",
+    desc:"Provides ₹6,000 per year to small and marginal farmers directly into their bank accounts in three installments of ₹2,000 each.",
+    tags:[{l:"Agriculture",c:"ptag-green"},{l:"₹6000/Year",c:"ptag-blue"},{l:"Farmers",c:"ptag-orange"}],
+    benefit:"₹6,000/Year",
+    criteria:["Must be a farmer","Land holding family","Income should be below ₹1.5 lakh","Should not be a government employee"],
+    applyUrl:"https://pmkisan.gov.in",
+    check: p => p.occupation === "Farmer" && p.income <= 1
+  },
+  {
+    id:3, name:"NSP National Scholarship Portal", emoji:"🎓",
+    ministry:"🏛️ Ministry of Education",
+    banner:"linear-gradient(135deg,#1e3a8a,#3b82f6)",
+    desc:"Comprehensive scholarship programme for students from SC, ST, OBC and minority communities for pursuing higher education.",
+    tags:[{l:"Education",c:"ptag-blue"},{l:"Scholarship",c:"ptag-purple"},{l:"SC/ST/OBC",c:"ptag-orange"}],
+    benefit:"Up to ₹12,000/Year",
+    criteria:["Student currently enrolled in course","Caste: SC, ST, OBC, or Minority","Family income below ₹2.5 lakh","Minimum 50% marks in last exam"],
+    applyUrl:"https://scholarships.gov.in",
+    check: p => p.occupation === "Student" && ["SC","ST","OBC","EWS"].includes(p.caste) && p.income <= 2
+  },
+  {
+    id:4, name:"PM Awas Yojana – Gramin", emoji:"🏠",
+    ministry:"🏛️ Ministry of Rural Development",
+    banner:"linear-gradient(135deg,#92400e,#d97706)",
+    desc:"Provides financial assistance to rural BPL households to build a safe and decent house. Grant of ₹1.2–1.3 lakh in plains, ₹1.3 lakh in hilly areas.",
+    tags:[{l:"Housing",c:"ptag-orange"},{l:"Rural",c:"ptag-green"},{l:"BPL",c:"ptag-blue"}],
+    benefit:"₹1.2–1.3 Lakh",
+    criteria:["Must be a rural household","Not own a pucca house","BPL / SECC 2011 listed","SC/ST/OBC priority","Income below ₹1 lakh preferred"],
+    applyUrl:"https://pmayg.nic.in",
+    check: p => p.income <= 1 && ["SC","ST","OBC","EWS"].includes(p.caste)
+  },
+  {
+    id:5, name:"Pradhan Mantri Mudra Yojana", emoji:"💳",
+    ministry:"🏛️ Ministry of Finance",
+    banner:"linear-gradient(135deg,#0c4a6e,#0284c7)",
+    desc:"Provides loans up to ₹10 lakh to non-corporate, non-farm small/micro enterprises. Covers Shishu (₹50k), Kishore (₹5L), Tarun (₹10L) categories.",
+    tags:[{l:"Loan",c:"ptag-blue"},{l:"Business",c:"ptag-green"},{l:"Self-Employed",c:"ptag-purple"}],
+    benefit:"Loan up to ₹10 Lakh",
+    criteria:["Any Indian citizen above 18","Starting or expanding a business","Should not be a defaulter","No collateral required for Shishu category"],
+    applyUrl:"https://www.mudra.org.in",
+    check: p => p.occupation === "Self-Employed / Business" || p.occupation === "Daily Wage Worker"
+  },
+  {
+    id:6, name:"Beti Bachao Beti Padhao", emoji:"👧",
+    ministry:"🏛️ Min. of Women & Child Development",
+    banner:"linear-gradient(135deg,#701a75,#a855f7)",
+    desc:"Addresses declining child sex ratio and empowers girl children through welfare and education support. Sukanya Samriddhi account benefits included.",
+    tags:[{l:"Women",c:"ptag-purple"},{l:"Girl Child",c:"ptag-blue"},{l:"Education",c:"ptag-green"}],
+    benefit:"Sukanya Samriddhi + Support",
+    criteria:["Family with a girl child below 10 years","Any Indian family can apply","Open Sukanya Samriddhi Account","Annual deposit minimum ₹250"],
+    applyUrl:"https://wcd.nic.in/bbbp-schemes",
+    check: p => p.gender === "Female" && p.age <= 30
+  },
+  {
+    id:7, name:"PM Ujjwala Yojana", emoji:"🔥",
+    ministry:"🏛️ Ministry of Petroleum",
+    banner:"linear-gradient(135deg,#7c2d12,#ea580c)",
+    desc:"Provides free LPG connections to women from BPL households to replace traditional chulha with clean cooking fuel.",
+    tags:[{l:"Women",c:"ptag-purple"},{l:"BPL",c:"ptag-orange"},{l:"Free LPG",c:"ptag-green"}],
+    benefit:"Free LPG Connection",
+    criteria:["Woman applicant aged 18+","BPL household","No LPG connection in the house","Valid BPL card or ration card"],
+    applyUrl:"https://www.pmujjwalayojana.com",
+    check: p => p.gender === "Female" && p.income <= 1
+  },
+  {
+    id:8, name:"Atal Pension Yojana", emoji:"👴",
+    ministry:"🏛️ Ministry of Finance / PFRDA",
+    banner:"linear-gradient(135deg,#1e3a8a,#0ea5e9)",
+    desc:"Pension scheme for unorganized sector workers ensuring a fixed minimum pension of ₹1,000–5,000 per month after age 60.",
+    tags:[{l:"Pension",c:"ptag-blue"},{l:"Retirement",c:"ptag-green"},{l:"Unorganized",c:"ptag-orange"}],
+    benefit:"₹1,000–5,000/Month Pension",
+    criteria:["Age between 18–40 years","Indian citizen","Bank account holder","Not an income tax payer"],
+    applyUrl:"https://www.npscra.nsdl.co.in",
+    check: p => p.age >= 18 && p.age <= 40 && p.income <= 2 && ["Daily Wage Worker","Self-Employed / Business","Farmer"].includes(p.occupation)
+  },
+  {
+    id:9, name:"Disability Certificate & Benefits", emoji:"♿",
+    ministry:"🏛️ Ministry of Social Justice",
+    banner:"linear-gradient(135deg,#134e4a,#0d9488)",
+    desc:"Persons with disability get reservations, free bus travel, concessions in railways, scholarships and pension benefits.",
+    tags:[{l:"Disability",c:"ptag-blue"},{l:"Social Welfare",c:"ptag-purple"},{l:"Concessions",c:"ptag-green"}],
+    benefit:"Multiple Concessions",
+    criteria:["40%+ certified disability","Indian citizen","Valid disability certificate from CMO","Any age group"],
+    applyUrl:"https://swavlambancard.gov.in",
+    check: p => p.disability === "yes"
+  },
+];
+
+// ── RENDER POLICY CARDS ──
+const grid = document.getElementById('policy-grid');
+POLICIES.forEach(p => {
+  const card = document.createElement('div');
+  card.className = 'policy-card';
+  card.innerHTML = `
+    <div class="policy-card-banner">
+      <div class="policy-card-banner-bg" style="background:${p.banner};"></div>
+      <div class="policy-card-banner-emoji">${p.emoji}</div>
+    </div>
+    <div class="policy-card-body">
+      <h3>${p.name}</h3>
+      <div class="ministry">${p.ministry}</div>
+      <div class="desc">${p.desc.substring(0,120)}...</div>
+      <div class="policy-tags">${p.tags.map(t=>`<span class="ptag ${t.c}">${t.l}</span>`).join('')}</div>
+      <div class="policy-card-footer">
+        <button class="check-eligibility-btn" onclick="openModal(${p.id})">View Details & Apply →</button>
+        <span class="benefit-pill">💰 ${p.benefit}</span>
+      </div>
+    </div>`;
+  grid.appendChild(card);
+});
+
+// ── MODAL ──
+function openModal(id) {
+  const p = POLICIES.find(x => x.id === id);
+  document.getElementById('modal-banner').style.background = p.banner;
+  document.getElementById('modal-banner').textContent = p.emoji;
+  document.getElementById('modal-title').textContent = p.name;
+  document.getElementById('modal-ministry').textContent = p.ministry;
+  document.getElementById('modal-desc').textContent = p.desc;
+  document.getElementById('modal-criteria').innerHTML = p.criteria.map(c=>`<li>${c}</li>`).join('');
+  document.getElementById('modal-apply').href = p.applyUrl;
+  document.getElementById('modal').classList.add('open');
+}
+function closeModal() { document.getElementById('modal').classList.remove('open'); }
+document.getElementById('modal').addEventListener('click', e => { if(e.target === document.getElementById('modal')) closeModal(); });
+
+// ── ELIGIBILITY CHECKER ──
+function checkEligibility() {
+  const age    = parseInt(document.getElementById('f-age').value) || 0;
+  const gender = document.getElementById('f-gender').value;
+  const caste  = document.getElementById('f-caste').value;
+  const occ    = document.getElementById('f-occ').value;
+  const income = parseInt(document.getElementById('f-income').value);
+  const dis    = document.getElementById('f-dis').value;
+  const state  = document.getElementById('f-state').value;
+
+  if (!age || !gender || !caste || !occ || isNaN(income)) {
+    alert('⚠️ Please fill all fields to check eligibility.');
+    return;
+  }
+
+  const profile = { age, gender, caste, occupation: occ, income, disability: dis, state };
+  const eligible = [], notEligible = [];
+
+  POLICIES.forEach(p => {
+    try {
+      if (p.check(profile)) eligible.push(p);
+      else notEligible.push(p);
+    } catch(e) { notEligible.push(p); }
+  });
+
+  const panel = document.getElementById('results-panel');
+  const header = document.getElementById('results-header');
+  const cards = document.getElementById('results-cards');
+  panel.classList.add('visible');
+  header.innerHTML = `🎯 Found <strong style="color:var(--green)">${eligible.length} schemes</strong> you qualify for! (${notEligible.length} not eligible based on your profile)`;
+  cards.innerHTML = '';
+
+  eligible.forEach(p => {
+    const d = document.createElement('div');
+    d.className = 'policy-result-card eligible';
+    d.innerHTML = `
+      <span class="badge-elig badge-yes">✅ ELIGIBLE</span>
+      <div class="pcard-top">
+        <div class="pcard-emoji">${p.emoji}</div>
+        <div class="pcard-info"><h4>${p.name}</h4><span>${p.ministry}</span></div>
+      </div>
+      <div class="pcard-reason">✅ Based on your profile — you meet the eligibility criteria for this scheme. Benefit: <strong>${p.benefit}</strong></div>
+      <a class="apply-link-btn" href="${p.applyUrl}" target="_blank">🚀 Apply on Official Portal →</a>
+      <button onclick="openModal(${p.id})" style="margin-left:10px;background:none;border:1px solid var(--border);padding:8px 14px;border-radius:8px;cursor:pointer;font-size:0.8rem;font-family:'DM Sans',sans-serif;color:var(--navy);">View Details</button>`;
+    cards.appendChild(d);
+  });
+
+  if (notEligible.length > 0) {
+    const h = document.createElement('div');
+    h.style.cssText = 'font-size:0.9rem;font-weight:600;color:var(--gray);margin:1.5rem 0 0.75rem;';
+    h.textContent = '❌ Not Eligible Based on Your Profile:';
+    cards.appendChild(h);
+    notEligible.forEach(p => {
+      const d = document.createElement('div');
+      d.className = 'policy-result-card not-eligible';
+      d.innerHTML = `
+        <span class="badge-elig badge-no">❌ NOT ELIGIBLE</span>
+        <div class="pcard-top">
+          <div class="pcard-emoji">${p.emoji}</div>
+          <div class="pcard-info"><h4>${p.name}</h4><span>${p.ministry}</span></div>
+        </div>
+        <div class="pcard-reason">Your current profile does not match all criteria. Update your profile or check eligibility on the official portal.</div>
+        <button onclick="openModal(${p.id})" style="background:none;border:1px solid var(--border);padding:8px 14px;border-radius:8px;cursor:pointer;font-size:0.8rem;font-family:'DM Sans',sans-serif;color:var(--gray);">See Criteria</button>`;
+      cards.appendChild(d);
+    });
+  }
+
+  panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+</script>
+</body>
+</html>
